@@ -1,5 +1,5 @@
 import unittest
-from pieces import Piece
+from pieces import Piece, Rook
 
 class TestPieces(unittest.TestCase):
     def test_rook(self):
@@ -68,4 +68,26 @@ class TestPieces(unittest.TestCase):
         self.assertTrue(BishopB.collision_check((5, 7), collision_gamestate))
         self.assertFalse(BishopB.collision_check((1, 3), collision_gamestate))
         self.assertFalse(BishopB.collision_check((8, 2), collision_gamestate))
+
+    def test_Rook(self):
+        RookW = Rook(True, 4, 4)
+        BishopW = Piece(True, 6, 4)
+        BishopB = Piece(False, 4, 7)
+        KnightB = Piece(False, 7, 4)
+        gamestate = {1: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    2: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    3: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    4: {1: None, 2: None, 3: None, 4: RookW, 5: None, 6: None, 7: BishopB, 8: None}, 
+                    5: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    6: {1: None, 2: None, 3: None, 4: BishopW, 5: None, 6: None, 7: None, 8: None}, 
+                    7: {1: None, 2: None, 3: None, 4: KnightB, 5: None, 6: None, 7: None, 8: None}, 
+                    8: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}}
+        
+        self.assertTrue(RookW.check_move((4, 6), gamestate))
+        self.assertTrue(RookW.check_move((4, 7), gamestate))
+        self.assertFalse(RookW.check_move((4, 8), gamestate))
+        self.assertTrue(RookW.check_move((5, 4), gamestate))
+        self.assertFalse(RookW.check_move((6, 4), gamestate))
+        self.assertFalse(RookW.check_move((7, 4), gamestate))
+        self.assertFalse(RookW.check_move((1, 6), gamestate))
     

@@ -1,3 +1,8 @@
+# Things to check:
+# 1. Can the target square be reached with the Piece's movement?
+# 2. Is the target square empty or does it contain a Piece of the opposite color?
+# 3. For pieces except Knights, are the in-between squares empty?
+
 class Piece:
     # moves can be specified for debug purposes but shouldn't under normal circumstances
     def __init__(self, white, x, y, moves=0):
@@ -36,16 +41,6 @@ class Piece:
             if y_offset == 0 or y_offset == 1:
                 return True
         return False
-        # surr_squares = []
-        # pointer_x = self.x - 2
-        # for i in range(0, 3):
-        #     pointer_y = self.y - 2
-        #     pointer_x += 1
-        #     for i in range(0, 3):
-        #         pointer_y += 1
-        #         surr_squares.append((pointer_x, pointer_y))
-        # surr_squares.remove((self.x, self.y))
-        # return True if square in surr_squares else False
     
     def check_nighthop(self, square):
         # kNight
@@ -119,4 +114,15 @@ class Piece:
             else:
                 if gamestate[sq[0]][sq[1]] is not None:
                     return False
+        return True
+    
+class Rook(Piece):
+    def __init__(self, white, x, y):
+        super().__init__(white, x, y)
+    
+    def check_move(self, square, gamestate):
+        if self.check_line(square) is False:
+            return False 
+        if self.collision_check(square, gamestate) is False:
+            return False
         return True
