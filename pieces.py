@@ -17,7 +17,7 @@ class Piece:
         if self.x == square[0] or self.y == square[1]:
             return True
         return False
-    
+
     def check_diag(self, square):
         # Bishop, Queen
         x_offset = abs(self.x - square[0])
@@ -90,3 +90,33 @@ class Piece:
                         return True
             
         return False
+    
+    def collision_check(self, square, gamestate):
+        # To be used *after* check_line and/or check_diag!
+        # Kings, Pawns and Knights only ever need to look at 1 target square so they aren't getting a general-purpose function
+
+        x = 0
+        y = 0
+        if self.x > square[0]:
+            x = -1
+        elif self.x < square[0]:
+            x = 1
+        if self.y > square[1]:
+            y = -1
+        elif self.y < square[1]:
+            y = 1
+        squares = []
+        squares.append((self.x + x, self.y + y))
+        travel_square = squares[-1]
+        while travel_square != square:
+            travel_square = (squares[-1][0] + x, squares[-1][1] + y)
+            squares.append(travel_square)
+        for sq in squares:
+            if sq == squares[-1]:
+                if gamestate[sq[0]][sq[1]] is not None:
+                    if gamestate[sq[0]][sq[1]].white == self.white:
+                        return False
+            else:
+                if gamestate[sq[0]][sq[1]] is not None:
+                    return False
+        return True

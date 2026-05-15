@@ -35,3 +35,37 @@ class TestPieces(unittest.TestCase):
         self.assertFalse(PawnB.check_pawn((6, 4), gamestate))
         self.assertFalse(PawnB.check_pawn((6, 1), gamestate))
         self.assertTrue(PawnB.check_pawn((5, 2), gamestate))
+
+
+
+    
+    def test_collision(self):
+        QueenW = Piece(True, 1, 3)
+        KnightB = Piece(False, 2, 4)
+        PawnW = Piece(True, 2, 8)
+        PawnB = Piece(False, 4, 2)
+        KnightW = Piece(True, 4, 3)
+        RookW = Piece(True, 4, 4)
+        BishopB = Piece(False, 4, 6)
+        KingW = Piece(True, 5, 7)
+        BishopW = Piece(True, 7, 4)
+        RookB = Piece(False, 8, 2)
+        collision_gamestate = {1: {1: None, 2: None, 3: QueenW, 4: None, 5: None, 6: None, 7: None, 8: None},
+                            2: {1: None, 2: None, 3: None, 4: KnightB, 5: None, 6: None, 7: None, 8: PawnW},
+                            3: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                            4: {1: None, 2: PawnB, 3: KnightW, 4: RookW, 5: None, 6: BishopB, 7: None, 8: None}, 
+                            5: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: KingW, 8: None}, 
+                            6: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                            7: {1: None, 2: None, 3: None, 4: BishopW, 5: None, 6: None, 7: None, 8: None}, 
+                            8: {1: None, 2: RookB, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}}
+        
+        self.assertTrue(RookW.collision_check((4, 6), collision_gamestate))
+        self.assertFalse(RookW.collision_check((7, 4), collision_gamestate))
+        self.assertTrue(RookW.collision_check((2, 4), collision_gamestate))
+        self.assertFalse(RookW.collision_check((4, 2), collision_gamestate))
+
+        self.assertTrue(BishopB.collision_check((2, 8), collision_gamestate))
+        self.assertTrue(BishopB.collision_check((5, 7), collision_gamestate))
+        self.assertFalse(BishopB.collision_check((1, 3), collision_gamestate))
+        self.assertFalse(BishopB.collision_check((8, 2), collision_gamestate))
+    
