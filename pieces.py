@@ -120,9 +120,22 @@ class Rook(Piece):
     def __init__(self, white, x, y):
         super().__init__(white, x, y)
     
+    # Castling is handled elsewhere
+
     def check_move(self, square, gamestate):
         if self.check_line(square) is False:
             return False 
+        if self.collision_check(square, gamestate) is False:
+            return False
+        return True
+    
+class Bishop(Piece):
+    def __init__(self, white, x, y):
+        super().__init__(white, x, y)
+
+    def check_move(self, square, gamestate):
+        if self.check_diag(square) is False:
+            return False
         if self.collision_check(square, gamestate) is False:
             return False
         return True
