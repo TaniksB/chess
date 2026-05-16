@@ -150,3 +150,13 @@ class Queen(Piece):
         if self.collision_check(square, gamestate) is False:
             return False
         return True
+    
+class Knight(Piece):
+    def __init__(self, white, x, y):
+        super().__init__(white, x, y)
+
+    def check_move(self, square, gamestate):
+        if gamestate[square[0]][square[1]] is not None:
+            if gamestate[square[0]][square[1]].white == self.white:
+                return False
+        return False if self.check_nighthop is False else True
