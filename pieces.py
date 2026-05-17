@@ -88,7 +88,7 @@ class Piece:
     
     def collision_check(self, square, gamestate):
         # To be used *after* check_line and/or check_diag!
-        # Kings, Pawns and Knights only ever need to look at 1 target square so they aren't getting a general-purpose function
+        # Kings and Knights have no travel-through squares so they aren't getting a general-purpose function (castling is handled seperately)
 
         x = 0
         y = 0
@@ -161,6 +161,10 @@ class Knight(Piece):
                 return False
         return False if self.check_nighthop(square) is False else True
     
+class Pawn(Piece):
+    def __init__(self, white, x, y, moves=0):
+        super().__init__(white, x, y, moves=0)
+    
 class King(Piece):
     def __init__(self, white, x, y, moves=0):
         super().__init__(white, x, y, moves=0)
@@ -170,3 +174,56 @@ class King(Piece):
             if gamestate[square[0]][square[1]].white == self.white:
                 return False
         return False if self.check_onesquare(square) is False else True
+    
+    def check_check(self, gamestate):
+        # 1. Check if the two Pawn Attack squares contain pawns
+        if self.white is True:
+            right = (self.y + 1, self.x + 1)
+            left = (self.y + 1, self.x - 1)
+        else:
+            right = (self.y - 1, self.x + 1)
+            left = (self.y - 1, self.x - 1)
+        squares = [right, left]
+        for square in squares:
+            if isinstance(gamestate[square[0]][square[1]], Pawn):
+                if self.white != gamestate[square[0]][square[1]].white:
+                    return True
+    
+        # 2. Check if the (up to) 8 Knight attack squares contain Knights
+        squares = []
+        to_remove = []
+        squares.append((self.y + 2, self.x +1))
+        squares.append((self.y + 1, self.x + 2))
+        squares.append((self.y - 1, self.x + 2))
+        squares.append((self.y - 2, self.x + 1))
+        squares.append((self.y - 2, self.x - 1))
+        squares.append((self.y - 1, self.x - 2))
+        squares.append((self.y + 1, self.x - 2))
+        squares.append((self.y + 2, self.x - 1))
+        for square in squares:
+            for num in square:
+                if num > 8 or num < 1:
+                    to_remove.append(square)
+        for square in to_remove:
+            squares.remove(square)
+        for square in squares:
+            if isinstance(gamestate[square[0]][square[1]], Knight):
+                if self.white != gamestate[square[0]][square[1]].white:
+                    return True
+
+        # 3. Check if the enemy King can reach the current King's location
+        # 4. Find all enemy Queens, Bishops and Rooks and see if they can reach the current King's location
+        for file in gamestate:
+            for square in gamestate[file]:
+                if isinstance(gamestate[file][square], King):
+                    if gamestate[file][square].white != self.white:
+                        enemy_king = gamestate[file][square]
+                if isinstance(gamestate[file][square], Queen) or isinstance(gamestate[file][square], Bishop) or isinstance(gamestate[file][square], Rook):
+                    if gamestate[file][square].check_move((self.y, self.x), gamestate):
+                        return True
+        if enemy_king.check_move((self.y, self.x), gamestate):
+            return True
+        return False
+        
+        # 4. Create a dummy Queen at the King's location and see if it can reach the location of any of the enemy Queens, Rooks and Bishops
+        

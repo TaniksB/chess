@@ -1,5 +1,5 @@
 import unittest
-from pieces import Piece, Rook, Bishop, Queen, Knight, King
+from pieces import Piece, Rook, Bishop, Queen, Knight, King, Pawn
 
 class TestPieces(unittest.TestCase):
     def test_rook(self):
@@ -167,3 +167,72 @@ class TestPieces(unittest.TestCase):
 
         self.assertFalse(KingW.check_move((3, 4), gamestate))
         self.assertFalse(KingW.check_move((4, 1), gamestate))
+    
+    def test_check_check_1(self):
+        KingW = King(True, 2, 2)
+        KingB = King(False, 5, 3)
+        PawnW = Pawn(True, 6, 4)
+        PawnB = Pawn(False, 3, 3)
+        gamestate = {1: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    2: {1: None, 2: KingW, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    3: {1: None, 2: None, 3: PawnB, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    4: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    5: {1: None, 2: None, 3: KingB, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    6: {1: None, 2: None, 3: None, 4: PawnW, 5: None, 6: None, 7: None, 8: None}, 
+                    7: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    8: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}}
+        
+        self.assertTrue(KingW.check_check(gamestate))
+        self.assertFalse(KingB.check_check(gamestate))
+
+    def test_check_check_2(self):
+        KingW = King(True, 4, 4)
+        KingB = King(False, 7, 3)
+        KnightW = Knight(True, 4, 2)
+        KnightB = Knight(False, 6, 5)
+        gamestate = {1: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    2: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    3: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    4: {1: None, 2: KnightW, 3: None, 4: KingW, 5: None, 6: None, 7: None, 8: None}, 
+                    5: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    6: {1: None, 2: None, 3: None, 4: None, 5: KnightB, 6: None, 7: None, 8: None}, 
+                    7: {1: None, 2: None, 3: KingB, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    8: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}}
+        
+        self.assertTrue(KingW.check_check(gamestate))
+        self.assertFalse(KingB.check_check(gamestate))
+
+    def test_check_check_3(self):
+        King1 = King(True, 4, 4)
+        King2 = King(False, 5, 5)
+        King3 = King(True, 7, 5)
+        gamestate = {1: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    2: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    3: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    4: {1: None, 2: None, 3: None, 4: King1, 5: None, 6: None, 7: None, 8: None}, 
+                    5: {1: None, 2: None, 3: None, 4: None, 5: King2, 6: None, 7: None, 8: None}, 
+                    6: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    7: {1: None, 2: None, 3: None, 4: None, 5: King3, 6: None, 7: None, 8: None}, 
+                    8: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}}
+        
+        self.assertTrue(King1.check_check(gamestate))
+        self.assertFalse(King3.check_check(gamestate))
+
+    def test_check_check_4(self):
+        KingW = King(True, 2, 2)
+        QueenW = Queen(True, 6, 2)
+        KingB = King(False, 6, 6)
+        QueenB = Queen(False, 2, 6)
+        KnightB = Knight(False, 6, 5)
+        gamestate = {1: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    2: {1: None, 2: KingW, 3: None, 4: None, 5: None, 6: QueenB, 7: None, 8: None},
+                    3: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    4: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    5: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    6: {1: None, 2: QueenW, 3: None, 4: None, 5: KnightB, 6: KingB, 7: None, 8: None}, 
+                    7: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    8: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}}
+        
+        self.assertTrue(KingW.check_check(gamestate))
+        self.assertFalse(KingB.check_check(gamestate))
+        
