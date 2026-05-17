@@ -117,8 +117,8 @@ class Piece:
         return True
     
 class Rook(Piece):
-    def __init__(self, white, x, y):
-        super().__init__(white, x, y)
+    def __init__(self, white, x, y, moves=0):
+        super().__init__(white, x, y, moves=0)
     
     # Castling is handled elsewhere
 
@@ -159,4 +159,14 @@ class Knight(Piece):
         if gamestate[square[0]][square[1]] is not None:
             if gamestate[square[0]][square[1]].white == self.white:
                 return False
-        return False if self.check_nighthop is False else True
+        return False if self.check_nighthop(square) is False else True
+    
+class King(Piece):
+    def __init__(self, white, x, y, moves=0):
+        super().__init__(white, x, y, moves=0)
+
+    def check_move(self, square, gamestate):
+        if gamestate[square[0]][square[1]] is not None:
+            if gamestate[square[0]][square[1]].white == self.white:
+                return False
+        return False if self.check_onesquare(square) is False else True
