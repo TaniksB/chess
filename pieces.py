@@ -182,8 +182,8 @@ class King(Piece):
             right = (self.x + 1, self.y + 1)
             left = (self.x + 1, self.y - 1)
         else:
-            right = (self.y + 1, self.x - 1)
-            left = (self.y - 1, self.x - 1)
+            right = (self.x - 1, self.y + 1)
+            left = (self.x - 1, self.y - 1)
         squares = [right, left]
         for square in squares:
             if isinstance(gamestate[square[0]][square[1]], Pawn):
@@ -257,6 +257,29 @@ class King(Piece):
         if not self.check_line(squares[1]):
             return False
         # 5 Check if the Rook can reach his target square
+        if not partner.check_move(squares[0], gamestate):
+            return False
+        return True
+    
+    def castle_long(self, gamestate):
+        if self.white:
+            partner = gamestate[1][1]
+            squares = ((1, 4), (1, 3))
+        else:
+            partner = gamestate[8][1]
+            squares = ((8, 4), (8, 3))
+        if not isinstance(partner, Rook):
+            return False
+        if self.moves != 0 or partner.moves != 0:
+            return False
+        if self.check_check(gamestate):
+            return False
+        for square in squares:
+            dummy = King(self.white, square[0], square[1])
+            if dummy.check_check(gamestate):
+                return False
+        if not self.check_line(squares[1]):
+            return False
         if not partner.check_move(squares[0], gamestate):
             return False
         return True
