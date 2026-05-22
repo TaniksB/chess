@@ -235,4 +235,30 @@ class TestPieces(unittest.TestCase):
         
         self.assertTrue(KingW.check_check(gamestate))
         self.assertFalse(KingB.check_check(gamestate))
+
+    def test_castle_short(self):
+        KingW = King(True, 1, 5)
+        RookW = Rook(True, 1, 8)
+        KingB = King(False, 8, 5)
+        RookB = Rook(False, 8, 8)
+        gamestate = {1: {1: None, 2: None, 3: None, 4: None, 5: KingW, 6: None, 7: None, 8: RookW},
+                    2: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    3: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    4: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    5: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    6: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    7: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    8: {1: None, 2: None, 3: None, 4: None, 5: KingB, 6: None, 7: None, 8: RookB}}
+        
+        self.assertTrue(KingB.castle_short(gamestate))
+        self.assertTrue(KingB.castle_short(gamestate))
+
+        KingW.moves = 1
+        self.assertFalse(KingW.castle_short(gamestate))
+        KingW.moves = 0
+
+        gamestate[1][7] = Queen(True, 1, 7)
+        self.assertFalse(KingW.castle_short(gamestate))
+        self.assertFalse(KingB.castle_short(gamestate))
+        
         

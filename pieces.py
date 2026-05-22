@@ -176,12 +176,13 @@ class King(Piece):
         return False if self.check_onesquare(square) is False else True
     
     def check_check(self, gamestate):
+        # After like 10 hours of debugging this function: https://www.reddit.com/r/ProgrammerHumor/comments/15ytbzk/codebyfaithnotbysight/
         # 1. Check if the two Pawn Attack squares contain pawns
         if self.white is True:
-            right = (self.y + 1, self.x + 1)
-            left = (self.y + 1, self.x - 1)
+            right = (self.x + 1, self.y + 1)
+            left = (self.x + 1, self.y - 1)
         else:
-            right = (self.y - 1, self.x + 1)
+            right = (self.y + 1, self.x - 1)
             left = (self.y - 1, self.x - 1)
         squares = [right, left]
         for square in squares:
@@ -205,7 +206,8 @@ class King(Piece):
                 if num > 8 or num < 1:
                     to_remove.append(square)
         for square in to_remove:
-            squares.remove(square)
+            if square in squares:
+                squares.remove(square)
         for square in squares:
             if isinstance(gamestate[square[0]][square[1]], Knight):
                 if self.white != gamestate[square[0]][square[1]].white:
@@ -219,11 +221,43 @@ class King(Piece):
                     if gamestate[file][square].white != self.white:
                         enemy_king = gamestate[file][square]
                 if isinstance(gamestate[file][square], Queen) or isinstance(gamestate[file][square], Bishop) or isinstance(gamestate[file][square], Rook):
-                    if gamestate[file][square].check_move((self.y, self.x), gamestate):
-                        return True
+                    if gamestate[file][square].check_move((self.x, self.y), gamestate):
+                        if gamestate[file][square].white != self.white:
+                            return True
         if enemy_king.check_move((self.y, self.x), gamestate):
             return True
         return False
-        
-        # 4. Create a dummy Queen at the King's location and see if it can reach the location of any of the enemy Queens, Rooks and Bishops
+    
+    def __repr__(self):
+        if self.white:
+            return f"White King at ({self.x}, {self.y}) with {self.moves} moves played"
+        return f"Black King at ({self.x}, {self.y}) with {self.moves} moves played"
+    
+    def castle_short(self, gamestate):
+        # 1 Check if King and Rook have not moved
+        if self.white:
+            partner = gamestate[1][8]
+            squares = ((1, 6), (1, 7))
+        else:
+            partner = gamestate[8][8]
+            squares = ((8, 6), (8, 7))
+        if not isinstance(partner, Rook):
+            return False
+        if self.moves != 0 or partner.moves != 0:
+            return False
+        # 2 Check if King is in check
+        if self.check_check(gamestate):
+            return False
+        # 3 Create dummy Kings at the King's destination square and travel square and see if they are in check. These never get saved to gamestate!
+        for square in squares:
+            dummy = King(self.white, square[0], square[1])
+            if dummy.check_check(gamestate):
+                return False
+        # 4 Check if the King can reach his target square (...using check_line and not his own check_move)
+        if not self.check_line(squares[1]):
+            return False
+        # 5 Check if the Rook can reach his target square
+        if not partner.check_move(squares[0], gamestate):
+            return False
+        return True
         
