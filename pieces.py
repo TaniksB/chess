@@ -57,31 +57,33 @@ class Piece:
     def check_pawn(self, square, gamestate):
         # pawn...
         # en passant is not supported yet... god help me
-        x_offset = abs(self.x - square[0])
+        y_offset = abs(self.y - square[1])
         target = gamestate[square[0]][square[1]]
 
         if self.white is True:
-            if square[0] == self.x and square[1] == self.y + 2:
+            if square[1] == self.y and square[0] == self.x + 2:
                 if self.moves == 0:
                     if target is None:
-                        return True
-            if square[0] == self.x and square[1] == self.y + 1:
+                        if gamestate[square[0]-1][square[1]] is None:
+                            return True
+            if square[1] == self.y and square[0] == self.x + 1:
                 if target is None:
                         return True
-        if x_offset == 1 and square[1] == self.y + 1:
-            if target is not None:
+        if y_offset == 1 and square[0] == self.x + 1:
+            if target is not None and target.white != self.white:
                         return True
             
         if self.white is False:
-             if square[0] == self.x and square[1] == self.y - 2:
+             if square[1] == self.y and square[0] == self.x - 2:
                 if self.moves == 0:
                     if target is None:
-                        return True
-             if square[0] == self.x and square[1] == self.y - 1:
+                        if gamestate[square[0]-1][square[1]] is None:
+                            return True
+             if square[1] == self.y and square[0] == self.x - 1:
                 if target is None:
                         return True
-        if x_offset == 1 and square[1] == self.y - 1:
-            if target is not None:
+        if y_offset == 1 and square[0] == self.x - 1:
+            if target is not None and target.white != self.white:
                         return True
             
         return False
@@ -118,7 +120,7 @@ class Piece:
     
 class Rook(Piece):
     def __init__(self, white, x, y, moves=0):
-        super().__init__(white, x, y, moves=0)
+        super().__init__(white, x, y, moves)
     
     # Castling is handled elsewhere
 
@@ -163,11 +165,14 @@ class Knight(Piece):
     
 class Pawn(Piece):
     def __init__(self, white, x, y, moves=0):
-        super().__init__(white, x, y, moves=0)
+        super().__init__(white, x, y, moves)
+
+    def check_move(self, square, gamestate):
+        return self.check_pawn(square, gamestate)
     
 class King(Piece):
     def __init__(self, white, x, y, moves=0):
-        super().__init__(white, x, y, moves=0)
+        super().__init__(white, x, y, moves)
 
     def check_move(self, square, gamestate):
         if gamestate[square[0]][square[1]] is not None:

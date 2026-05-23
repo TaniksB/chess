@@ -10,7 +10,7 @@ def render(gamestate, move_white):
 
 
 def render_white(gamestate):
-    board = "8 "
+    board = "\n8 "
     pointer_x = 1
     pointer_y = 8
     square_white = True

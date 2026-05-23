@@ -1,5 +1,6 @@
 import unittest
 from pieces import Piece, Rook, Bishop, Queen, Knight, King, Pawn
+from render import render
 
 class TestPieces(unittest.TestCase):
     def test_rook(self):
@@ -288,5 +289,46 @@ class TestPieces(unittest.TestCase):
 
         gamestate[7][3] = Pawn(True, 7, 3)
         self.assertFalse(KingB.castle_long(gamestate))
+
+    def test_pawn(self):
+        w1 = Pawn(True, 3, 3, 1)
+        w2 = Pawn(True, 2, 4, 0)
+        w3 = Pawn(True, 2, 5, 0)
+        b1 = Pawn(False, 3, 5, 1)
+        b2 = Pawn(False, 4, 6, 1)
+        gamestate = {1: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None},
+                    2: {1: None, 2: None, 3: None, 4: w2, 5: w3, 6: None, 7: None, 8: None},
+                    3: {1: None, 2: None, 3: w1, 4: None, 5: b1, 6: None, 7: None, 8: None},
+                    4: {1: None, 2: None, 3: None, 4: None, 5: None, 6: b2, 7: None, 8: None}, 
+                    5: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    6: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    7: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}, 
+                    8: {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None}}
+        
+        self.assertTrue(w1.check_move((4, 3), gamestate))
+        self.assertFalse(w1.check_move((5, 3), gamestate))
+        self.assertFalse(w1.check_move((4, 2), gamestate))
+        self.assertFalse(w1.check_move((4, 4), gamestate))
+        self.assertFalse(w1.check_move((3, 2), gamestate))
+        self.assertFalse(w1.check_move((2, 3), gamestate))
+        self.assertFalse(w1.check_move((2, 2), gamestate))
+
+        self.assertTrue(w2.check_move((3, 4), gamestate))
+        self.assertTrue(w2.check_move((4, 4), gamestate))
+        self.assertTrue(w2.check_move((3, 5), gamestate))
+        self.assertFalse(w2.check_move((3, 2), gamestate))
+        self.assertFalse(w2.check_move((5, 4), gamestate))
+        self.assertFalse(w2.check_move((3, 3), gamestate))
+
+        self.assertFalse(w3.check_move((3, 5), gamestate))
+        self.assertFalse(w3.check_move((4, 5), gamestate))
+
+        self.assertTrue(b1.check_move((2, 4), gamestate))
+        self.assertFalse(b1.check_move((2, 5), gamestate))
+
+        self.assertTrue(b2.check_move((3, 6), gamestate))
+        self.assertFalse(b2.check_move((3, 5), gamestate))
+        self.assertFalse(b2.check_move((2, 5), gamestate))
+        self.assertFalse(b2.check_move((4, 5), gamestate))
         
         
